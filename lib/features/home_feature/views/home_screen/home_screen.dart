@@ -29,6 +29,7 @@ class _HomeState extends ConsumerState<Home> {
   @override
   Widget build(BuildContext context) {
     final home = ref.watch(homeProvider.notifier);
+    final homeState = ref.watch(homeProvider);
     return Scaffold(
         body: CustomScrollView(
       controller: home.itemsScrollController,
@@ -43,41 +44,26 @@ class _HomeState extends ConsumerState<Home> {
           elevation: 1.2,
           backgroundColor: AppColors.primaryBlue,
           pinned: true,
-          leading: IconButton(
-              onPressed: () => GoRouter.of(context).pop(),
-              icon: const Icon(
-                Icons.arrow_back,
-                color: AppColors.whiteColor,
-              )),
         ),
         SliverPersistentHeader(
           delegate: MySliverPersistentHeaderDelegate(),
           floating: false,
         ),
-        StreamBuilder<HomeState>(
-          stream: home.stream,
-          builder: (context, snapshot) {
-            if (snapshot.data is HomeLoading) {
-              return const SliverToBoxAdapter(child: LoadingWidget());
-            } else if (snapshot.data is HomeError) {
-              var error = snapshot.data as HomeError;
-              return SliverToBoxAdapter(
-                  child: Text(
-                error.errorMessage,
-                style: Theme.of(context).textTheme.displayMedium,
-              ));
-            }
-            return snapshot.hasData
-                ? SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => ItemCardWidget(
-                          itemPhotoModel: home.itemsModel!.listOfPhoto![index]),
-                      childCount: home.itemsModel!.listOfPhoto!.length,
-                    ),
-                  )
-                : const SliverToBoxAdapter(child: LoadingWidget());
-          },
-        )
+        if (homeState is HomeError)
+          SliverToBoxAdapter(
+              child: Text(
+            homeState.errorMessage,
+            style: Theme.of(context).textTheme.displayMedium,
+          )),
+        homeState is HomeDone
+            ? SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => ItemCardWidget(
+                      itemPhotoModel: home.itemsModel!.listOfPhoto![index]),
+                  childCount: home.itemsModel!.listOfPhoto!.length,
+                ),
+              )
+            : const SliverToBoxAdapter(child: LoadingWidget())
       ],
     ));
   }

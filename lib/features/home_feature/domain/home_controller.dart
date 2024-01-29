@@ -19,6 +19,7 @@ class HomeController extends StateNotifier<HomeState> {
   ScrollController itemsScrollController = ScrollController();
 
   ItemPhotoModel? selectedItem;
+
   Future<void> getItems({
     bool paginated = false,
   }) async {
@@ -31,7 +32,6 @@ class HomeController extends StateNotifier<HomeState> {
       if (pageNumber > totalPages!) {
         return;
       }
-      state = HomePaginatedLoading();
     }
     var notification = _homeRepo.getItems(
       pageNumber,
@@ -45,10 +45,6 @@ class HomeController extends StateNotifier<HomeState> {
           totalPages = (itemsModel!.totalPhotos! % 10) == 0
               ? totalPagesPre
               : totalPagesPre + 1;
-          if (itemsModel!.listOfPhoto!.isEmpty) {
-            state = HomeEmpty();
-            return;
-          }
         } else {
           itemsModel!.listOfPhoto?.addAll(value.listOfPhoto!);
         }
@@ -61,9 +57,7 @@ class HomeController extends StateNotifier<HomeState> {
     itemsScrollController.addListener(() async {
       final endOfScroll = itemsScrollController.offset ==
           itemsScrollController.position.maxScrollExtent;
-      if (endOfScroll &&
-          state is HomePaginatedLoading == false &&
-          totalPages! > pageNumber) {
+      if (endOfScroll && totalPages! > pageNumber) {
         pageNumber++;
         if (!isScrollFinished) {
           getItems(

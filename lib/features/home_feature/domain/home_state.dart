@@ -10,14 +10,6 @@ class HomeLoading extends HomeState {
   List<Object> get props => [];
 }
 
-class HomePaginatedLoading extends HomeState {
-  List<Object> get props => [];
-}
-
-class HomeEmpty extends HomeState {
-  List<Object> get props => [];
-}
-
 class HomeDone extends HomeState {
   List<Object> get props => [];
 }

@@ -49,21 +49,22 @@ class _HomeState extends ConsumerState<Home> {
           delegate: MySliverPersistentHeaderDelegate(),
           floating: false,
         ),
-        if (homeState is HomeError)
+        if (homeState is HomeLoading)
+          const SliverToBoxAdapter(child: LoadingWidget())
+        else if (homeState is HomeError)
           SliverToBoxAdapter(
               child: Text(
             homeState.errorMessage,
             style: Theme.of(context).textTheme.displayMedium,
-          )),
-        homeState is HomeDone
-            ? SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => ItemCardWidget(
-                      itemPhotoModel: home.itemsModel!.listOfPhoto![index]),
-                  childCount: home.itemsModel!.listOfPhoto!.length,
-                ),
-              )
-            : const SliverToBoxAdapter(child: LoadingWidget())
+          ))
+        else if (homeState is HomeDone)
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => ItemCardWidget(
+                  itemPhotoModel: home.itemsModel!.listOfPhoto![index]),
+              childCount: home.itemsModel!.listOfPhoto!.length,
+            ),
+          )
       ],
     ));
   }

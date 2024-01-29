@@ -33,10 +33,10 @@ class HomeController extends StateNotifier<HomeState> {
         return;
       }
     }
-    var notification = _homeRepo.getItems(
+    var result = _homeRepo.getItems(
       pageNumber,
     );
-    await notification.excute(
+    await result.excute(
       onFailed: (failed) => state = HomeError(failed.message!),
       onSuccess: (value) {
         if (pageNumber == 1) {

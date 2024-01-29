@@ -10,10 +10,6 @@ extension ResponseHandler on Response {
           state: statusCode,
           data: data);
     } else if (statusCode! > 201 && statusMessage != "Unauthorized") {
-      if (data is Map) {
-        throw FailureModel(
-            message: data["error"], state: statusCode, data: data.toString());
-      }
       throw FailureModel(
           message: data.toString(), state: statusCode, data: data.toString());
     } else {
